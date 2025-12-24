@@ -265,7 +265,7 @@ importers:
         specifier: ^10.4.20
         version: 10.4.23(postcss@8.5.6)
       esbuild:
-        specifier: ^0.25.0
+        specifier: 0.25.12
         version: 0.25.12
       jsdom:
         specifier: ^27.0.0
