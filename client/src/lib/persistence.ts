@@ -12,7 +12,7 @@ export interface PersistedWizardState {
     choices: string[];
     createdAssets: string[];
     gameType: string | null;
-    selectedGameType?: string | null;
+    selectedGameType?: string;
     currentProject: any | null;
     completedSteps: string[];
     unlockedEditor: boolean;
@@ -28,20 +28,22 @@ export interface PersistedWizardState {
 
 export interface PersistedSessionState {
   version: string;
+  gameName?: string;
   uiState: {
     pixelMenuOpen: boolean;
     embeddedComponent: string;
     pixelState: string;
-    wysiwygEditorOpen: boolean;
-    assetBrowserOpen: boolean;
-    assetBrowserType: string;
+    wysiwygEditorOpen?: boolean;
+    assetBrowserOpen?: boolean;
+    assetBrowserType?: string;
     selectedGameType?: string;
-    isMinimizing: boolean;
+    isMinimizing?: boolean;
     minimizeMessage?: string;
     previewMode?: string;
     viewMode?: string;
     pyodideMode?: boolean;
     curatedMode?: boolean;
+    gameName?: string;
   };
   updatedAt: string;
 }
@@ -60,6 +62,37 @@ const SESSION_STATE_KEY = 'wizard.session.v1';
 const PREFERENCES_COOKIE_PREFIX = 'wizard_';
 const COOKIE_EXPIRY_DAYS = 365;
 const DEBOUNCE_DELAY = 200; // milliseconds
+
+const DEFAULT_WIZARD_STATE: PersistedWizardState = {
+  version: STORAGE_VERSION,
+  activeFlowPath: null,
+  currentNodeId: 'start',
+  gameType: null,
+  selectedGameType: null,
+  sessionActions: {
+    choices: [],
+    createdAssets: [],
+    gameType: null,
+    currentProject: null,
+    completedSteps: [],
+    unlockedEditor: false
+  },
+  updatedAt: new Date().toISOString()
+};
+
+const DEFAULT_SESSION_STATE: PersistedSessionState = {
+  version: STORAGE_VERSION,
+  uiState: {
+    pixelMenuOpen: false,
+    embeddedComponent: '',
+    pixelState: 'welcome',
+    wysiwygEditorOpen: false,
+    assetBrowserOpen: false,
+    assetBrowserType: 'all',
+    isMinimizing: false,
+  },
+  updatedAt: new Date().toISOString()
+};
 
 // Debounce utility
 function debounce<T extends (...args: any[]) => any>(
@@ -111,7 +144,7 @@ function validateAndMigrate<T>(data: any, currentVersion: string): T | null {
 // LocalStorage functions for wizard state
 export function saveWizardState(state: Partial<PersistedWizardState>): void {
   try {
-    const currentState = loadWizardState();
+    const currentState = loadWizardState() || DEFAULT_WIZARD_STATE;
     const newState: PersistedWizardState = {
       ...currentState,
       ...state,
@@ -154,7 +187,7 @@ export function clearWizardState(): void {
 // SessionStorage functions for UI state
 export function saveSessionState(state: Partial<PersistedSessionState>): void {
   try {
-    const currentState = loadSessionState();
+    const currentState = loadSessionState() || DEFAULT_SESSION_STATE;
     const newState: PersistedSessionState = {
       ...currentState,
       ...state,

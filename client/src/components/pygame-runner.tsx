@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Play, Pause, RefreshCw, Download, Maximize, Minimize, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { compilePythonGame } from '@/lib/pygame-game-compiler';
+import { compileStrataGame } from '@/lib/pygame-game-compiler';
 
 interface PygameRunnerProps {
   selectedComponents?: Record<string, string>;
@@ -339,7 +339,7 @@ MockPygame.key.get_pressed = lambda: global_key_state
     
     try {
       // Compile the game
-      const pythonCode = compilePythonGame(selectedComponents, selectedAssets);
+      const pythonCode = compileStrataGame(selectedComponents, selectedAssets);
       
       // Prepare the game code for browser execution
       // We don't modify the code directly - let the mock pygame handle it
@@ -400,7 +400,7 @@ if 'global_key_state' in globals():
 
   // Download game as Python file
   const downloadGame = useCallback(() => {
-    const pythonCode = compilePythonGame(selectedComponents, selectedAssets);
+    const pythonCode = compileStrataGame(selectedComponents, selectedAssets);
     const blob = new Blob([pythonCode], { type: 'text/x-python' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
