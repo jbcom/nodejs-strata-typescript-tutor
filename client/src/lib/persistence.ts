@@ -12,7 +12,7 @@ export interface PersistedWizardState {
     choices: string[];
     createdAssets: string[];
     gameType: string | null;
-    selectedGameType?: string | null;
+    selectedGameType?: string;
     currentProject: any | null;
     completedSteps: string[];
     unlockedEditor: boolean;
@@ -32,17 +32,18 @@ export interface PersistedSessionState {
     pixelMenuOpen: boolean;
     embeddedComponent: string;
     pixelState: string;
-    wysiwygEditorOpen: boolean;
-    assetBrowserOpen: boolean;
-    assetBrowserType: string;
+    wysiwygEditorOpen?: boolean;
+    assetBrowserOpen?: boolean;
+    assetBrowserType?: string;
     selectedGameType?: string;
-    isMinimizing: boolean;
+    isMinimizing?: boolean;
     minimizeMessage?: string;
     previewMode?: string;
     viewMode?: string;
     pyodideMode?: boolean;
     curatedMode?: boolean;
   };
+  gameName?: string;
   updatedAt: string;
 }
 
@@ -111,10 +112,29 @@ function validateAndMigrate<T>(data: any, currentVersion: string): T | null {
 // LocalStorage functions for wizard state
 export function saveWizardState(state: Partial<PersistedWizardState>): void {
   try {
-    const currentState = loadWizardState();
+    const currentState = loadWizardState() || {
+      version: STORAGE_VERSION,
+      activeFlowPath: null,
+      currentNodeId: '',
+      gameType: null,
+      selectedGameType: null,
+      sessionActions: {
+        choices: [],
+        createdAssets: [],
+        gameType: null,
+        completedSteps: [],
+        unlockedEditor: false,
+        currentProject: null
+      },
+      updatedAt: new Date().toISOString()
+    };
+    
     const newState: PersistedWizardState = {
       ...currentState,
       ...state,
+      sessionActions: state.sessionActions 
+        ? { ...currentState.sessionActions, ...state.sessionActions } 
+        : currentState.sessionActions,
       version: STORAGE_VERSION,
       updatedAt: new Date().toISOString()
     };
@@ -154,10 +174,26 @@ export function clearWizardState(): void {
 // SessionStorage functions for UI state
 export function saveSessionState(state: Partial<PersistedSessionState>): void {
   try {
-    const currentState = loadSessionState();
+    const currentState = loadSessionState() || {
+      version: STORAGE_VERSION,
+      uiState: {
+        pixelMenuOpen: false,
+        embeddedComponent: '',
+        pixelState: 'hidden',
+        wysiwygEditorOpen: false,
+        assetBrowserOpen: false,
+        assetBrowserType: 'sprite',
+        isMinimizing: false
+      },
+      updatedAt: new Date().toISOString()
+    };
+    
     const newState: PersistedSessionState = {
       ...currentState,
       ...state,
+      uiState: state.uiState 
+        ? { ...currentState.uiState, ...state.uiState } 
+        : currentState.uiState,
       version: STORAGE_VERSION,
       updatedAt: new Date().toISOString()
     };

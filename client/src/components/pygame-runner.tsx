@@ -18,7 +18,7 @@ interface PygameRunnerProps {
 declare global {
   interface Window {
     loadPyodide: any;
-    pyodide: any;
+    pyodide?: any;
   }
 }
 
