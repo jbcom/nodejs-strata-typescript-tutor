@@ -164,8 +164,8 @@ export function useWizardDialogue({
           console.log('📍 Restoring persisted node in already-loaded flow:', persistedState.currentNodeId);
           setDialogueState(prev => ({
             ...prev,
-            currentNodeId: persistedState.currentNodeId,
-            currentNode: wizardData[persistedState.currentNodeId],
+            currentNodeId: persistedState.currentNodeId as string,
+            currentNode: (wizardData as any)[persistedState.currentNodeId as string],
             dialogueStep: 0,
             carouselIndex: 0,
             showAllChoices: false

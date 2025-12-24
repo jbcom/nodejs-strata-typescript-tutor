@@ -31,9 +31,9 @@ interface CodeEditorProps {
     title: string;
     description: string;
     tests?: Array<{
-      input?: string;
+      input?: string | null;
       expectedOutput: string;
-      description?: string;
+      description?: string | null;
     }>;
   };
 }

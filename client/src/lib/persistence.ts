@@ -8,7 +8,7 @@ export interface PersistedWizardState {
   currentNodeId: string;
   gameType: string | null;
   selectedGameType: string | null;
-  sessionActions: {
+  sessionActions?: {
     choices: string[];
     createdAssets: string[];
     gameType: string | null;
@@ -22,27 +22,29 @@ export interface PersistedWizardState {
     titlePresetApplied?: boolean;
     gameplayConfigured?: boolean;
     endingConfigured?: boolean;
+    gameName?: string | null;
   };
   updatedAt: string;
 }
 
 export interface PersistedSessionState {
   version: string;
-  uiState: {
-    pixelMenuOpen: boolean;
-    embeddedComponent: string;
-    pixelState: string;
-    wysiwygEditorOpen: boolean;
-    assetBrowserOpen: boolean;
-    assetBrowserType: string;
+  uiState?: {
+    pixelMenuOpen?: boolean;
+    embeddedComponent?: string;
+    pixelState?: string;
+    wysiwygEditorOpen?: boolean;
+    assetBrowserOpen?: boolean;
+    assetBrowserType?: string;
     selectedGameType?: string;
-    isMinimizing: boolean;
+    isMinimizing?: boolean;
     minimizeMessage?: string;
     previewMode?: string;
     viewMode?: string;
     pyodideMode?: boolean;
     curatedMode?: boolean;
   };
+  gameName?: string;
   updatedAt: string;
 }
 
@@ -113,11 +115,11 @@ export function saveWizardState(state: Partial<PersistedWizardState>): void {
   try {
     const currentState = loadWizardState();
     const newState: PersistedWizardState = {
-      ...currentState,
+      ...(currentState || {}),
       ...state,
       version: STORAGE_VERSION,
       updatedAt: new Date().toISOString()
-    };
+    } as PersistedWizardState;
     
     localStorage.setItem(WIZARD_STATE_KEY, JSON.stringify(newState));
   } catch (error) {
@@ -156,11 +158,11 @@ export function saveSessionState(state: Partial<PersistedSessionState>): void {
   try {
     const currentState = loadSessionState();
     const newState: PersistedSessionState = {
-      ...currentState,
+      ...(currentState || {}),
       ...state,
       version: STORAGE_VERSION,
       updatedAt: new Date().toISOString()
-    };
+    } as PersistedSessionState;
     
     sessionStorage.setItem(SESSION_STATE_KEY, JSON.stringify(newState));
   } catch (error) {
