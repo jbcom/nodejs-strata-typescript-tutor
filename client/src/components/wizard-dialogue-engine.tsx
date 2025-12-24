@@ -45,7 +45,13 @@ export function useWizardDialogue({
   
   // Initialize state from localStorage if available
   const getInitialDialogueState = (): DialogueState => {
-    const persistedState = loadWizardState();
+    let persistedState: PersistedWizardState | null = null;
+    try {
+      persistedState = loadWizardState();
+    } catch (e) {
+      console.error('Failed to load persisted state:', e);
+    }
+    
     console.log('🔧 Initializing dialogue state from localStorage:', {
       hasPersistedState: !!persistedState,
       currentNodeId: persistedState?.currentNodeId,
@@ -72,9 +78,15 @@ export function useWizardDialogue({
   };
   
   const getInitialSessionActions = (): SessionActions => {
-    const persistedState = persistedStateRef.current || loadWizardState();
+    let persistedState: PersistedWizardState | null = null;
+    try {
+      persistedState = persistedStateRef.current || loadWizardState();
+    } catch (e) {
+      console.error('Failed to load persisted session actions:', e);
+    }
+    
     if (persistedState && persistedState.sessionActions) {
-      return persistedState.sessionActions;
+      return persistedState.sessionActions as SessionActions;
     }
     return {
       choices: [],
@@ -91,7 +103,12 @@ export function useWizardDialogue({
   
   // Track the currently loaded flow path, loading state, and failed attempts
   const [loadedFlowPath, setLoadedFlowPath] = useState<string | null>(() => {
-    const persistedState = persistedStateRef.current || loadWizardState();
+    let persistedState: PersistedWizardState | null = null;
+    try {
+      persistedState = persistedStateRef.current || loadWizardState();
+    } catch (e) {
+      console.error('Failed to load persisted flow path:', e);
+    }
     return persistedState?.activeFlowPath || null;
   });
   const [isFlowLoading, setIsFlowLoading] = useState(false);

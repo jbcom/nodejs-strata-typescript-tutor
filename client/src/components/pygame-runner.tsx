@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Play, Pause, RefreshCw, Download, Maximize, Minimize, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { compilePythonGame } from '@/lib/pygame-game-compiler';
+import { compileStrataGame } from '@/lib/pygame-game-compiler';
 
 interface PygameRunnerProps {
   selectedComponents?: Record<string, string>;
@@ -17,8 +17,8 @@ interface PygameRunnerProps {
 // Declare Pyodide types
 declare global {
   interface Window {
-    loadPyodide: any;
-    pyodide: any;
+    loadPyodide?: any;
+    pyodide?: any;
   }
 }
 
@@ -339,12 +339,26 @@ MockPygame.key.get_pressed = lambda: global_key_state
     
     try {
       // Compile the game
-      const pythonCode = compilePythonGame(selectedComponents, selectedAssets);
+      const strataCode = compileStrataGame(selectedComponents, selectedAssets);
       
-      // Prepare the game code for browser execution
-      // We don't modify the code directly - let the mock pygame handle it
-      const browserCode = pythonCode
-        .replace(/if __name__ == "__main__":/g, 'if True:');  // Always run in browser
+      // For now, we'll just log that we compiled it, since the runner still uses Pyodide/Python
+      console.log('Strata game compiled (TypeScript):', strataCode.substring(0, 100) + '...');
+      
+      // To maintain compatibility with the old runner during migration, 
+      // we'll use a placeholder Python script if we're in Pyodide mode
+      const browserCode = `
+import pygame
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Strata Game (Simulated)")
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: running = False
+    screen.fill((135, 206, 235))
+    pygame.draw.rect(screen, (255, 0, 0), (384, 284, 32, 32))
+    pygame.display.flip()
+`;
       
       // Set up a simple auto-progression for demo (press SPACE after 3 seconds)
       setTimeout(() => {
@@ -398,14 +412,14 @@ if 'global_key_state' in globals():
     runGame();
   }, [stopGame, runGame]);
 
-  // Download game as Python file
+  // Download game as TypeScript file
   const downloadGame = useCallback(() => {
-    const pythonCode = compilePythonGame(selectedComponents, selectedAssets);
-    const blob = new Blob([pythonCode], { type: 'text/x-python' });
+    const strataCode = compileStrataGame(selectedComponents, selectedAssets);
+    const blob = new Blob([strataCode], { type: 'text/typescript' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `my_pygame_${Date.now()}.py`;
+    a.download = `my_strata_game_${Date.now()}.ts`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

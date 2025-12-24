@@ -35,7 +35,7 @@ import PygameComponentSelector from './pygame-component-selector';
 import { GameAsset } from '@/lib/asset-library/asset-types';
 import { assetManager } from '@/lib/asset-library/asset-manager';
 import { ICON_SIZES, STYLES } from './wizard-constants';
-import { compilePythonGame, downloadPythonFile } from '@/lib/pygame-game-compiler';
+import { compileStrataGame, downloadTypeScriptFile } from '@/lib/pygame-game-compiler';
 import {
   saveSessionState,
   loadSessionState,
@@ -506,15 +506,15 @@ export default function UniversalWizard({
       console.log('sessionActions.selectedComponents:', sessionActions.selectedComponents);
       console.log('selectedAssets:', selectedAssets);
       
-      try {
-        const pythonCode = compilePythonGame(sessionActions.selectedComponents || {}, selectedAssets);
-        console.log('Python code compiled, length:', pythonCode.length);
-        
-        const filename = `my_game_${Date.now()}.py`;
-        console.log('Downloading as:', filename);
-        
-        downloadPythonFile(pythonCode, filename);
-        console.log('Download triggered successfully');
+        try {
+          const strataCode = compileStrataGame(sessionActions.selectedComponents || {}, selectedAssets);
+          console.log('Strata code compiled, length:', strataCode.length);
+          
+          const filename = `my_game_${Date.now()}.ts`;
+          console.log('Downloading as:', filename);
+          
+          downloadTypeScriptFile(strataCode, filename);
+          console.log('Download triggered successfully');
         
         // Show a success message to the user
         const toast = (window as any).toast || console.log;
@@ -668,13 +668,13 @@ export default function UniversalWizard({
         console.log('selectedAssets:', selectedAssets);
         
         try {
-          const pythonCode = compilePythonGame(sessionActions.selectedComponents || {}, selectedAssets);
-          console.log('Python code compiled, length:', pythonCode.length);
+          const strataCode = compileStrataGame(sessionActions.selectedComponents || {}, selectedAssets);
+          console.log('Strata code compiled, length:', strataCode.length);
           
-          const filename = `my_game_${Date.now()}.py`;
+          const filename = `my_game_${Date.now()}.ts`;
           console.log('Downloading as:', filename);
           
-          downloadPythonFile(pythonCode, filename);
+          downloadTypeScriptFile(strataCode, filename);
           console.log('Download triggered successfully from PixelMenu');
           
           // Show success message if toast is available

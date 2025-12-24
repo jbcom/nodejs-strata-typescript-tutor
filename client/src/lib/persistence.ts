@@ -4,10 +4,10 @@
 // Type definitions for persisted data
 export interface PersistedWizardState {
   version: string;
-  activeFlowPath: string | null;
+  activeFlowPath: string | null | undefined;
   currentNodeId: string;
-  gameType: string | null;
-  selectedGameType: string | null;
+  gameType: string | null | undefined;
+  selectedGameType?: string | null | undefined;
   sessionActions: {
     choices: string[];
     createdAssets: string[];
@@ -22,27 +22,29 @@ export interface PersistedWizardState {
     titlePresetApplied?: boolean;
     gameplayConfigured?: boolean;
     endingConfigured?: boolean;
+    gameName?: string;
   };
   updatedAt: string;
 }
 
 export interface PersistedSessionState {
   version: string;
-  uiState: {
+  uiState?: {
     pixelMenuOpen: boolean;
     embeddedComponent: string;
     pixelState: string;
-    wysiwygEditorOpen: boolean;
-    assetBrowserOpen: boolean;
-    assetBrowserType: string;
+    wysiwygEditorOpen?: boolean;
+    assetBrowserOpen?: boolean;
+    assetBrowserType?: string;
     selectedGameType?: string;
-    isMinimizing: boolean;
+    isMinimizing?: boolean;
     minimizeMessage?: string;
     previewMode?: string;
     viewMode?: string;
     pyodideMode?: boolean;
     curatedMode?: boolean;
   };
+  gameName?: string;
   updatedAt: string;
 }
 
@@ -117,7 +119,7 @@ export function saveWizardState(state: Partial<PersistedWizardState>): void {
       ...state,
       version: STORAGE_VERSION,
       updatedAt: new Date().toISOString()
-    };
+    } as PersistedWizardState;
     
     localStorage.setItem(WIZARD_STATE_KEY, JSON.stringify(newState));
   } catch (error) {
@@ -160,7 +162,7 @@ export function saveSessionState(state: Partial<PersistedSessionState>): void {
       ...state,
       version: STORAGE_VERSION,
       updatedAt: new Date().toISOString()
-    };
+    } as PersistedSessionState;
     
     sessionStorage.setItem(SESSION_STATE_KEY, JSON.stringify(newState));
   } catch (error) {
