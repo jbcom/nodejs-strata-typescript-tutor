@@ -16,6 +16,12 @@ declare global {
      * Input getter for testing and debugging
      */
     __getInput?: () => string | null;
+
+    /**
+     * Pyodide runtime for Python execution
+     */
+    loadPyodide?: any;
+    pyodide?: any;
   }
 
   /**

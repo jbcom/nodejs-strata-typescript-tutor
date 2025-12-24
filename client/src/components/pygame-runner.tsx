@@ -15,12 +15,7 @@ interface PygameRunnerProps {
 }
 
 // Declare Pyodide types
-declare global {
-  interface Window {
-    loadPyodide: any;
-    pyodide: any;
-  }
-}
+// (Removed local declaration, using global definition in client/src/types/global.d.ts)
 
 export default function PygameRunner({
   selectedComponents = {},

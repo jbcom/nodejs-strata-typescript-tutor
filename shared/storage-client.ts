@@ -68,8 +68,7 @@ export class ClientStorage {
     const users = this.getFromLocalStorage<Record<string, User>>(ClientStorage.STORAGE_KEYS.USERS);
     const newUser: User = {
       id: this.generateId(),
-      username,
-      password: 'anonymous' // Non-sensitive placeholder for anonymous users
+      username
     };
     users[newUser.id] = newUser;
     this.saveToLocalStorage(ClientStorage.STORAGE_KEYS.USERS, users);
@@ -129,7 +128,7 @@ export class ClientStorage {
         lessonId,
         currentStep: 0,
         completed: false,
-        code: null,
+        code: undefined,
         ...progressData
       };
     }
@@ -153,12 +152,12 @@ export class ClientStorage {
   async createProject(project: InsertProject): Promise<Project> {
     const projects = this.getFromLocalStorage<Record<string, Project>>(ClientStorage.STORAGE_KEYS.PROJECTS);
     const newProject: Project = {
+      ...project,
       id: this.generateId(),
       createdAt: new Date(),
-      publishedAt: null,
-      published: false,
-      ...project,
-      description: project.description ?? null
+      publishedAt: undefined,
+      published: project.published || false,
+      description: project.description ?? undefined
     };
     projects[newProject.id] = newProject;
     this.saveToLocalStorage(ClientStorage.STORAGE_KEYS.PROJECTS, projects);
@@ -203,7 +202,7 @@ export class ClientStorage {
   async unpublishProject(id: string): Promise<Project> {
     return this.updateProject(id, { 
       published: false, 
-      publishedAt: null 
+      publishedAt: undefined 
     });
   }
 

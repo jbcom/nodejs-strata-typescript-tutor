@@ -165,7 +165,7 @@ export function useWizardDialogue({
           setDialogueState(prev => ({
             ...prev,
             currentNodeId: persistedState.currentNodeId,
-            currentNode: wizardData[persistedState.currentNodeId],
+            currentNode: wizardData[persistedState.currentNodeId!],
             dialogueStep: 0,
             carouselIndex: 0,
             showAllChoices: false
@@ -421,7 +421,7 @@ export function useWizardDialogue({
 
 interface DialogueTextProps {
   text: string;
-  nodeId: string;
+  nodeId?: string;
   dialogueStep: number;
   className?: string;
 }
