@@ -26,7 +26,7 @@ import {
   CookieMock,
   createCorruptedData,
   waitFor
-} from '../../../tests/test-utils';
+} from '../../../../tests/test-utils';
 
 describe('Persistence Library', () => {
   let localStorageMock: LocalStorageMock;

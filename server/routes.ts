@@ -48,7 +48,7 @@ export function registerRoutes(app: Express): void {
       const userId = "mock-user-id"; // In a real app, this would come from authentication
       
       const progress = await storage.getUserProgressForLesson(userId, lessonId);
-      res.json(progress || null);
+      res.json(progress || undefined);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch lesson progress" });
     }

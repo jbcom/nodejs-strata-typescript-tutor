@@ -73,7 +73,7 @@ export default function AssetBrowserWizard({
     const filter: AssetFilter = {
       search: searchQuery || undefined,
       type: selectedTab === 'all' ? undefined : selectedTab as AssetType,
-      category: selectedCategory === 'all' ? undefined : selectedCategory
+      category: (selectedCategory === 'all' ? undefined : selectedCategory) as AssetFilter['category']
     };
 
     if (assetType) {
@@ -87,7 +87,7 @@ export default function AssetBrowserWizard({
   const categories = useMemo(() => {
     const cats = new Set<string>();
     filteredAssets.forEach(asset => {
-      if ('category' in asset) {
+      if ('category' in asset && asset.category) {
         cats.add(asset.category);
       }
     });
