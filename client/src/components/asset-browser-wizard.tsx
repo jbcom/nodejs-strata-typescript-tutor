@@ -87,8 +87,8 @@ export default function AssetBrowserWizard({
   const categories = useMemo(() => {
     const cats = new Set<string>();
     filteredAssets.forEach(asset => {
-      if ('category' in asset) {
-        cats.add(asset.category);
+      if ('category' in asset && asset.category) {
+        cats.add(asset.category as string);
       }
     });
     return Array.from(cats);
